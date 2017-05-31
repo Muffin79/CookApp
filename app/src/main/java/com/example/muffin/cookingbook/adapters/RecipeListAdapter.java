@@ -39,12 +39,12 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Re
     public RecipeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipe_list_item, parent, false);
-        return new RecipeHolder(v,parent.getContext());
+        return new RecipeHolder(v, parent.getContext());
     }
 
     @Override
     public void onBindViewHolder(RecipeHolder holder, int position) {
-        holder.bindViewHolder(mRecipes.get(position),position);
+        holder.bindViewHolder(mRecipes.get(position), position);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Re
         RecipeHolder(View itemView, Context context) {
             super(itemView);
             itemView.setOnClickListener(v -> context.startActivity(RecipeActivity.
-                                                                    newIntent(context,mRecipeId)));
+                    newIntent(context, mRecipeId)));
 
             mRecipeImage = (ImageView) itemView.findViewById(R.id.recipe_imageView);
             mRecipeTitle = (TextView) itemView.findViewById(R.id.recipe_title);
@@ -77,42 +77,35 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Re
 
         }
 
-        private void bindViewHolder(Recipe recipe,int position) {
+        private void bindViewHolder(Recipe recipe, int position) {
             mRecipeId = recipe.getId();
             mDeleteImg.setOnClickListener(v -> {
-                try {
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.where(Recipe.class)
-                            .equalTo("mId", recipe.getId())
-                            .findAll()
-                            .deleteAllFromRealm();
-                    realm.commitTransaction();
-                    mRecipes.remove(recipe);
-                    RecipeListAdapter.this.notifyItemRemoved(position);
-                }catch(Exception e){
-                    Log.d(AddRecipeActivity.TAG,Log.getStackTraceString(e));
-                }
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+                realm.where(Recipe.class)
+                        .equalTo("mId", recipe.getId())
+                        .findAll()
+                        .deleteAllFromRealm();
+                realm.commitTransaction();
+                mRecipes.remove(recipe);
+                RecipeListAdapter.this.notifyItemRemoved(position);
             });
             mFavoriteChkBx.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                try {
-                    Realm realm = Realm.getDefaultInstance();
-                    Recipe rec = realm.where(Recipe.class)
-                            .equalTo("mId", recipe.getId())
-                            .findFirst();
-                    realm.beginTransaction();
-                    rec.setFavorite(isChecked);
-                    realm.commitTransaction();
-                }catch (Exception e){
-                    Log.d("RecipeListFragment",Log.getStackTraceString(e));
-                }
+                Realm realm = Realm.getDefaultInstance();
+                Recipe rec = realm.where(Recipe.class)
+                        .equalTo("mId", recipe.getId())
+                        .findFirst();
+                realm.beginTransaction();
+                rec.setFavorite(isChecked);
+                realm.commitTransaction();
             });
             mRecipeTitle.setText(recipe.getTitle());
-            mCookTimeTv.setText(mContext.getString(R.string.cooking_time,recipe.getCookingTime()));
+            mCookTimeTv.setText(mContext.getString(R.string.cooking_time, recipe.getCookingTime()));
             mFavoriteChkBx.setChecked(recipe.isFavorite());
-            if(!recipe.getImageFilePath().isEmpty()) {
-                Log.d("AddRecipeActivity",recipe.getImageFilePath());
-                Picasso.with(mContext).load(recipe.getImageFilePath())
+            if (!recipe.getImageFilePath().isEmpty()) {
+                Log.d("AddRecipeActivity", recipe.getImageFilePath());
+                Picasso.with(mContext)
+                        .load(recipe.getImageFilePath())
                         .placeholder(R.drawable.ic_photo_camera_black)
                         .into(mRecipeImage);
             }
