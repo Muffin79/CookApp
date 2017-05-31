@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="category_item_margin">16dp</dimen>
+    <dimen name="standard_margin">16dp</dimen>
+</resources>
