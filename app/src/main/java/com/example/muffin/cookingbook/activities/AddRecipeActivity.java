@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +25,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 
 public class AddRecipeActivity extends AppCompatActivity {
-    public static final String TAG = "AddRecipeActivity";
+    //public static final String TAG = "AddRecipeActivity";
     private static final int PICK_IMAGE_REQUEST = 0;
     private static final String EXTRA_RECIPE_ID = "com.example.muffin.cookingbook.activities.extra_rec_id";
 
@@ -34,9 +33,9 @@ public class AddRecipeActivity extends AppCompatActivity {
         return new Intent(context, AddRecipeActivity.class);
     }
 
-    public static Intent newIntent(Context context,int recipeId){
+    public static Intent newIntent(Context context, int recipeId) {
         Intent intent = newIntent(context);
-        intent.putExtra(EXTRA_RECIPE_ID,recipeId);
+        intent.putExtra(EXTRA_RECIPE_ID, recipeId);
         return intent;
     }
 
@@ -97,29 +96,29 @@ public class AddRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void bindWithRecipe(){
-        mRecipeId = getIntent().getIntExtra(EXTRA_RECIPE_ID,-1);
-        if(mRecipeId == -1) return;
+    private void bindWithRecipe() {
+        mRecipeId = getIntent().getIntExtra(EXTRA_RECIPE_ID, -1);
+        if (mRecipeId == -1) return;
         Recipe recipe = mRealm.where(Recipe.class)
-                              .equalTo("mId",mRecipeId)
-                              .findFirst();
+                .equalTo("mId", mRecipeId)
+                .findFirst();
         mTitleEdit.setText(recipe.getTitle());
         mCookingTimeEdit.setText(String.valueOf(recipe.getCookingTime()));
-        if(!recipe.getImageFilePath().isEmpty()) {
+        if (!recipe.getImageFilePath().isEmpty()) {
             mImagePath = recipe.getImageFilePath();
             Picasso.with(this).load(recipe.getImageFilePath())
                     .into(mRecipeImage);
         }
 
         int i = 0;
-        for(RealmString str : recipe.getIngredients()){
+        for (RealmString str : recipe.getIngredients()) {
             mIngredientsList.get(i).setText(str.getVal());
             addEditText(mIngredientsLayout);
             i++;
         }
 
         i = 0;
-        for(RealmString str : recipe.getSteps()){
+        for (RealmString str : recipe.getSteps()) {
             mStepsList.get(i).setText(str.getVal());
             addEditText(mStepsLayout);
             i++;
@@ -154,7 +153,9 @@ public class AddRecipeActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
-    /**Read data for creating recipe from UI and save it in database**/
+    /**
+     * Read data for creating recipe from UI and save it in database
+     **/
     private void saveRecipe() {
         if (mTitleEdit.getText().toString().isEmpty()) {
             Toast.makeText(this, R.string.input_title, Toast.LENGTH_SHORT).show();
@@ -175,9 +176,9 @@ public class AddRecipeActivity extends AppCompatActivity {
         for (EditText edit : mIngredientsList) {
             if (edit.getText().toString().isEmpty()) continue;
             RealmString str = new RealmString(edit.getText().toString());
-            if(str.isManaged()) {
+            if (str.isManaged()) {
                 ingredients.add(str);
-            }else{
+            } else {
                 ingredients.add(mRealm.copyToRealm(str));
             }
         }
@@ -185,44 +186,40 @@ public class AddRecipeActivity extends AppCompatActivity {
         for (EditText edit : mStepsList) {
             if (edit.getText().toString().isEmpty()) continue;
             RealmString str = new RealmString(edit.getText().toString());
-            if(str.isManaged()) {
+            if (str.isManaged()) {
                 steps.add(str);
-            }else{
+            } else {
                 steps.add(mRealm.copyToRealm(str));
             }
         }
 
-
-        try {
-            int id = 0;
-            Recipe recipe;
-            if (mRecipeId == -1) {
-                if (!mRealm.where(Recipe.class).findAll().isEmpty()) {
-                    id = mRealm.where(Recipe.class).max("mId").intValue() + 1;
-                }
-                recipe = mRealm.createObject(Recipe.class);
-                recipe.setId(id);
-            } else {
-                recipe = mRealm.where(Recipe.class)
-                        .equalTo("mId", mRecipeId)
-                        .findFirst();
+        int id = 0;
+        Recipe recipe;
+        if (mRecipeId == -1) {
+            if (!mRealm.where(Recipe.class).findAll().isEmpty()) {
+                id = mRealm.where(Recipe.class).max("mId").intValue() + 1;
             }
-
-
-            //Recipe recipe = new Recipe(title, time, false, ingredients, steps);
-            recipe.setTitle(title);
-            recipe.setCookingTime(time);
-            recipe.setFavorite(recipe.isFavorite());
-            recipe.setIngredients(ingredients);
-            recipe.setSteps(steps);
-            recipe.setType(mSpinner.getSelectedItem().toString());
-            recipe.setImageFilePath(mImagePath);
-            mRealm.commitTransaction();
-            //mRealm.executeTransaction(realm1 -> realm1.copyToRealm(recipe));
-            Log.d(TAG, "saved");
-        }catch (Exception e){
-            Log.d(TAG,Log.getStackTraceString(e));
+            recipe = mRealm.createObject(Recipe.class);
+            recipe.setId(id);
+        } else {
+            recipe = mRealm.where(Recipe.class)
+                    .equalTo("mId", mRecipeId)
+                    .findFirst();
         }
+
+
+        //Recipe recipe = new Recipe(title, time, false, ingredients, steps);
+        recipe.setTitle(title);
+        recipe.setCookingTime(time);
+        recipe.setFavorite(recipe.isFavorite());
+        recipe.setIngredients(ingredients);
+        recipe.setSteps(steps);
+        recipe.setType(mSpinner.getSelectedItem().toString());
+        recipe.setImageFilePath(mImagePath);
+        mRealm.commitTransaction();
+        Toast.makeText(this, R.string.recipe_saved, Toast.LENGTH_SHORT).show();
+        finish();
+
     }
 
     private void addEditText(LinearLayout layout) {

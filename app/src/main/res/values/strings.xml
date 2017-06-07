@@ -27,4 +27,8 @@
     <string name="delete">Удалить</string>
     <string name="input_cooking_time">Введите время приготовления!</string>
     <string name="update_recipe">Редактировать рецепт</string>
+    <string name="recipe_saved">Рецепт сохранен!</string>
+    <string name="start">Начать</string>
+    <string name="restart">Перезапустить</string>
+    <string name="stop">Отмена</string>
 </resources>

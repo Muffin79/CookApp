@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,85 +21,117 @@
             android:contentDescription="@string/recipe_image_description"
             android:scaleType="fitStart"
             android:src="@drawable/ic_photo_camera_black"/>
+
         <LinearLayout
-            android:padding="@dimen/standard_margin"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        <TextView
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:id="@+id/title_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:orientation="vertical"
+            android:padding="@dimen/standard_margin">
 
             <TextView
-                android:id="@+id/cook_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cook_time"/>
-
-            <ImageView
-                android:id="@+id/watch_icon_image"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_below="@id/cook_time"
-                android:layout_marginTop="5dp"
-                android:contentDescription="@string/watch_icon"
-                android:src="@drawable/ic_stopwatch"/>
-
-            <TextView
-                android:id="@+id/recipe_cooking_time"
+                android:id="@+id/title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/cook_time"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_toRightOf="@id/watch_icon_image"/>
+                android:layout_marginTop="@dimen/recipe_vertical_margin"
+                android:textStyle="bold"/>
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/recipe_vertical_margin">
+
+                <TextView
+                    android:id="@+id/cook_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cook_time"/>
+
+                <ImageView
+                    android:id="@+id/watch_icon_image"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_below="@id/cook_time"
+                    android:layout_marginTop="5dp"
+                    android:contentDescription="@string/watch_icon"
+                    android:src="@drawable/ic_stopwatch"/>
+
+                <TextView
+                    android:id="@+id/recipe_cooking_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cook_time"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/watch_icon_image"/>
+
+            </RelativeLayout>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/ingredients"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/recipe_vertical_margin"
+                android:text="@string/ingredients"/>
 
 
-        <TextView
-            android:id="@+id/ingredients_textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/ingredients_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="@dimen/recipe_vertical_margin"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/cooking"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/recipe_vertical_margin"
+                android:text="@string/cooking"/>
 
-        <TextView
-            android:id="@+id/steps_textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/steps_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="@dimen/recipe_vertical_margin"/>
 
             <CheckBox
                 android:id="@+id/recipe_favorite_chkBx"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/recipe_vertical_margin"
                 android:button="@drawable/favorite_checkbox_btn"
                 android:text="@string/favorite"/>
+
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/recipe_vertical_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginRight="5dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:layout_marginTop="@dimen/recipe_vertical_margin"
+                    android:id="@+id/timer_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/timer_start_button"
+                    style="@style/AddRecipeButton"
+                    android:text="@string/start"
+                    android:layout_marginRight="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/timer_stop_button"
+                    style="@style/AddRecipeButton"
+                    android:text="@string/stop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

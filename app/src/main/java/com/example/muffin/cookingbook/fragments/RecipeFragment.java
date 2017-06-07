@@ -1,11 +1,13 @@
 package com.example.muffin.cookingbook.fragments;
 
 import android.graphics.Bitmap;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +17,8 @@ import com.example.muffin.cookingbook.models.RealmString;
 import com.example.muffin.cookingbook.models.Recipe;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+
+import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
 import io.realm.RealmList;
@@ -31,7 +35,12 @@ public class RecipeFragment extends Fragment {
     private TextView mCookTimeText;
     private TextView mStepsTextView;
     private TextView mIngredientsView;
+    private TextView mTimerTextView;
     private CheckBox mFavoriteChkBox;
+    private Button mStartTimerButton;
+    private Button mStopTimerButton;
+
+    private CountDownTimer mTimer;
     private Realm mRealm;
 
     public RecipeFragment() {
@@ -57,6 +66,10 @@ public class RecipeFragment extends Fragment {
             mRecipe.setFavorite(isChecked);
             mRealm.commitTransaction();
         });
+        mStartTimerButton = (Button) v.findViewById(R.id.timer_start_button);
+        mStopTimerButton = (Button) v.findViewById(R.id.timer_stop_button);
+        mTimerTextView = (TextView) v.findViewById(R.id.timer_textView);
+
         return v;
     }
 
@@ -75,39 +88,52 @@ public class RecipeFragment extends Fragment {
         int width = getResources().getConfiguration().screenWidthDp;
         int height = getResources().getConfiguration().screenHeightDp / 3;
 
-        Transformation transformation = new Transformation() {
-
-            @Override
-            public Bitmap transform(Bitmap source) {
-                int targetWidth = getResources().getConfiguration().screenWidthDp;
-
-                double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
-                int targetHeight = (int) (targetWidth * aspectRatio);
-                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
-                if (result != source) {
-                    // Same bitmap is returned if sizes are the same
-                    source.recycle();
-                }
-                return result;
-            }
-
-            @Override
-            public String key() {
-                return "transformation" + " desiredWidth";
-            }
-        };
-
-
         if(!mRecipe.getImageFilePath().isEmpty()) Picasso.with(getContext())
                                                         .load(mRecipe.getImageFilePath())
                                                         .resize(width,height)
                                                         .centerInside()
                                                         .into(mRecipeImage);
 
+        long cookTimeMillis = TimeUnit.MINUTES.toMillis(mRecipe.getCookingTime());
+        mTimerTextView.setText(formatMillisToStr(cookTimeMillis));
+
+        mStartTimerButton.setOnClickListener(v -> {
+            if(mTimer != null) mTimer.cancel();
+            mTimer = new CountDownTimer(cookTimeMillis,1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    mTimerTextView.setText(formatMillisToStr(millisUntilFinished));
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            mTimer.start();
+            mStartTimerButton.setText(R.string.restart);
+        });
+
+        mStopTimerButton.setOnClickListener(v -> {
+            if(mTimer != null){
+                mTimer.cancel();
+                mStartTimerButton.setText(R.string.start);
+                mTimerTextView.setText(formatMillisToStr(cookTimeMillis));
+            }
+        });
+
         mCookTimeText.setText(String.valueOf(mRecipe.getCookingTime()));
         mFavoriteChkBox.setChecked(mRecipe.isFavorite());
         mIngredientsView.setText(getIngredientsString(mRecipe.getIngredients()));
         mStepsTextView.setText(getStepsString(mRecipe.getSteps()));
+    }
+
+    private String formatMillisToStr(long millis){
+       return String.format("%02d : %02d",
+                TimeUnit.MILLISECONDS.toMinutes(millis),
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+       );
     }
 
     private String getStepsString(RealmList<RealmString> steps) {
